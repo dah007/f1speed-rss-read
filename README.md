@@ -29,7 +29,7 @@ Command Palette only finds extensions that are installed as a real Windows packa
    - `F1RssFeedRead_<version>_arm64.msix` — ARM64 (Surface Pro X, etc.)
    - `F1SpeedFeedRead.cer` — the publisher certificate
 2. **Trust the certificate first** (one-time, per machine) — the package is signed with a self-signed certificate rather than a paid one, so Windows won't install it until you tell it to trust that signer:
-   - Double-click `F1SpeedFeedRead.cer` → **Install Certificate** → **Current User** → **Place all certificates in the following store** → **Trusted People** → **Finish**.
+   - Double-click `F1SpeedFeedRead.cer` → **Install Certificate** → **Local Machine** (not Current User — the install will fail with error `0x800B0109` otherwise, since the AppX Deployment service that validates the signature runs as SYSTEM and only checks Local Machine stores) → accept the UAC prompt → **Place all certificates in the following store** → **Trusted People** → **Finish**.
 3. Double-click the `.msix` file and install it (or `Add-AppxPackage -Path .\F1RssFeedRead_<version>_x64.msix` in PowerShell).
 4. Open Command Palette, run **Reload** → **Reload Command Palette extensions**.
 5. Search for **F1 News** or **Manage F1 Feeds**.
