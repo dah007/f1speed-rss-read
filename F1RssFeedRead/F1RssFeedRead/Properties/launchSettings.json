@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "F1RssFeedRead (Package)": {
+      "commandName": "MsixPackage",
+      "doNotLaunchApp": true
+    },
+    "F1RssFeedRead (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
