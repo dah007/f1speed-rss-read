@@ -28,11 +28,19 @@ Command Palette only finds extensions that are installed as a real Windows packa
    - `F1RssFeedRead_<version>_x64.msix` — Intel/AMD 64-bit
    - `F1RssFeedRead_<version>_arm64.msix` — ARM64 (Surface Pro X, etc.)
    - `F1SpeedFeedRead.cer` — the publisher certificate
-2. **Trust the certificate first** (one-time, per machine) — the package is signed with a self-signed certificate rather than a paid one, so Windows won't install it until you tell it to trust that signer:
-   - Double-click `F1SpeedFeedRead.cer` → **Install Certificate** → **Local Machine** (not Current User — the install will fail with error `0x800B0109` otherwise, since the AppX Deployment service that validates the signature runs as SYSTEM and only checks Local Machine stores) → accept the UAC prompt → **Place all certificates in the following store** → **Trusted People** → **Finish**.
+2. **Trust the certificate** (one-time, per machine). The package is signed with a self-signed certificate rather than a paid one, so Windows won't install it until you tell it to trust that signer — and it must go in the **Local Machine** store specifically, not Current User:
+   - **GUI:** Double-click `F1SpeedFeedRead.cer` → **Install Certificate** → **Local Machine** → accept the UAC prompt → **Place all certificates in the following store** → **Browse** → **Trusted People** → **OK** → **Next** → **Finish**.
+   - **PowerShell (as Administrator), equivalent:**
+
+     ```powershell
+     Import-Certificate -FilePath .\F1SpeedFeedRead.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+     ```
+
 3. Double-click the `.msix` file and install it (or `Add-AppxPackage -Path .\F1RssFeedRead_<version>_x64.msix` in PowerShell).
 4. Open Command Palette, run **Reload** → **Reload Command Palette extensions**.
 5. Search for **F1 News** or **Manage F1 Feeds**.
+
+> **Troubleshooting:** if step 3 fails with `App installation failed... error 0x800B0109: The root certificate of the signature in the app package or bundle must be trusted`, the certificate landed in the **Current User** store instead of **Local Machine** — the AppX Deployment service that validates the signature runs as SYSTEM and only checks Local Machine stores. Redo step 2, making sure to pick **Local Machine** in the wizard's first screen (it defaults to Current User).
 
 ### Option 2 — Build and deploy from source
 
