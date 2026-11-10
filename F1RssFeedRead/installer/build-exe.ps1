@@ -22,9 +22,15 @@ if (-not (Test-Path $projectPath)) {
     exit 1
 }
 
-$innoCompiler = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-if (-not (Test-Path $innoCompiler)) {
-    Write-Error "Inno Setup 6 not found at '$innoCompiler'. Install it from https://jrsoftware.org/isdl.php"
+$innoCandidates = @(
+    "C:\Program Files\Inno Setup 7\ISCC.exe"
+    "C:\Program Files (x86)\Inno Setup 7\ISCC.exe"
+    "C:\Program Files\Inno Setup 6\ISCC.exe"
+    "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+)
+$innoCompiler = $innoCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+if (-not $innoCompiler) {
+    Write-Error "Inno Setup not found. Install it from https://jrsoftware.org/isdl.php"
     exit 1
 }
 

@@ -10,9 +10,13 @@
 
 #define MyAppName "F1Speed Feed Read"
 #define MyAppExeName "F1RssFeedRead.exe"
-#define MyAppPublisher "A Lone Developer"
+#define MyAppPublisher "dah007"
 #define MyAppURL "https://github.com/dah007/f1speed-rss-read"
-#define MyAppCLSID "{20D1B788-DDD1-4B84-A5FA-DF3B61A47939}"
+; Inno Setup treats a bare "{" as the start of a {constant} reference, so the
+; opening brace here is doubled ("{{") to escape it into a literal character
+; everywhere {#MyAppCLSID} is substituted below (AppId= and the two Subkey=
+; lines) — otherwise ISCC fails with "Unknown constant" on the GUID text.
+#define MyAppCLSID "{{20D1B788-DDD1-4B84-A5FA-DF3B61A47939}"
 
 #ifndef MyAppVersion
   #define MyAppVersion "0.0.1"
@@ -28,6 +32,11 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 ArchitecturesAllowed={#ArchitecturesAllowed}
+; Without this, Setup runs as a 32-bit process and Windows' WOW64 redirector
+; silently sends the [Registry] writes below to ...\Classes\WOW6432Node\CLSID
+; instead of the real key — Command Palette (a 64-bit process) would then
+; never find the registration. Running Setup natively 64-bit/ARM64 avoids it.
+ArchitecturesInstallIn64BitMode={#ArchitecturesAllowed}
 DefaultDirName={localappdata}\Programs\{#MyAppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
