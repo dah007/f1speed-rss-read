@@ -1,0 +1,24 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Installer build artifacts (produced by installer/build-exe.ps1)
+installer/Installer/
+installer/publish/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# OS cruft
+Thumbs.db
+.DS_Store
+
+# NOTE: launchSettings.json and *.pubxml are intentionally NOT ignored.
+# A common .NET .gitignore excludes them, but this project's MSIX deploy
+# (Build > Deploy / the "(Package)" launch profile) needs them committed.
