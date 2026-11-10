@@ -10,10 +10,10 @@
 
   <Identity
     Name="F1RssFeedRead"
-    Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+    Publisher="CN=dah007"
     Version="0.0.1.0" />
-  <!-- When you're ready to publish your extension, you'll need to change the
-       Publisher= to match your own identity -->
+  <!-- Publisher must exactly match the Subject of the certificate used to sign
+       the MSIX (see installer/build-msix.ps1), or signing/installation fails. -->
 
   <Properties>
     <DisplayName>F1Speed Feed Read</DisplayName>

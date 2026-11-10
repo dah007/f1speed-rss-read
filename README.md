@@ -16,18 +16,23 @@ Repo: [github.com/dah007/f1speed-rss-read](https://github.com/dah007/f1speed-rss
 
 - Windows 10 (build 19041+) or Windows 11.
 - [Command Palette](https://learn.microsoft.com/windows/powertoys/command-palette/overview) (ships with recent [PowerToys](https://aka.ms/PowerToys) releases, or standalone from the Microsoft Store).
-- No separate .NET install needed — the release installer ships a self-contained build.
+- No separate .NET install needed — the release package is self-contained.
 
 ## Installing
 
-### Option 1 — Installer (recommended)
+Command Palette only finds extensions that are installed as a real Windows package (it doesn't scan for apps the way a Start Menu search does) — so unlike most GitHub tools, this isn't a plain EXE you just run. Pick one of the two options below.
 
-1. Grab the latest installer for your CPU architecture from the [Releases](https://github.com/dah007/f1speed-rss-read/releases) page:
-   - `F1Speed Feed Read_<version>_x64compatible.exe` — Intel/AMD 64-bit
-   - `F1Speed Feed Read_<version>_arm64.exe` — ARM64 (Surface Pro X, etc.)
-2. Run it. It installs per-user (no admin rights needed) to `%LOCALAPPDATA%\Programs\F1Speed Feed Read` and registers the extension with Windows.
-3. Open Command Palette, run **Reload** → **Reload Command Palette extensions**.
-4. Search for **F1 News** or **Manage F1 Feeds**.
+### Option 1 — MSIX package (recommended for most users)
+
+1. From the [Releases](https://github.com/dah007/f1speed-rss-read/releases) page, download for your CPU architecture:
+   - `F1RssFeedRead_<version>_x64.msix` — Intel/AMD 64-bit
+   - `F1RssFeedRead_<version>_arm64.msix` — ARM64 (Surface Pro X, etc.)
+   - `F1SpeedFeedRead.cer` — the publisher certificate
+2. **Trust the certificate first** (one-time, per machine) — the package is signed with a self-signed certificate rather than a paid one, so Windows won't install it until you tell it to trust that signer:
+   - Double-click `F1SpeedFeedRead.cer` → **Install Certificate** → **Current User** → **Place all certificates in the following store** → **Trusted People** → **Finish**.
+3. Double-click the `.msix` file and install it (or `Add-AppxPackage -Path .\F1RssFeedRead_<version>_x64.msix` in PowerShell).
+4. Open Command Palette, run **Reload** → **Reload Command Palette extensions**.
+5. Search for **F1 News** or **Manage F1 Feeds**.
 
 ### Option 2 — Build and deploy from source
 
@@ -47,26 +52,29 @@ Repo: [github.com/dah007/f1speed-rss-read](https://github.com/dah007/f1speed-rss
 
 ## Uninstalling
 
-If you installed via the EXE installer:
+Either way you installed it, this is a normal Windows package: **Settings → Apps → Installed apps**, find **F1Speed Feed Read**, and uninstall. Run **Reload** in Command Palette afterward if it's still listed.
 
-- **Settings → Apps → Installed apps**, find **F1Speed Feed Read**, and uninstall — or run the installer again and choose uninstall.
-- This removes the installed files and the registry entries that registered the extension, so it disappears from Command Palette. Run **Reload** in Command Palette afterward if it's still listed.
+## Building the package yourself
 
-If you deployed from Visual Studio, remove it the same way you'd remove any sideloaded MSIX app (**Settings → Apps**), or use **Build > Clean**.
-
-## Building the installer yourself
-
-The `F1RssFeedRead/installer/` folder has everything needed to produce the same EXE installers published in Releases:
+The `F1RssFeedRead/installer/` folder has everything needed to produce the same signed MSIX packages published in Releases:
 
 ```powershell
-# Requires Inno Setup 6: https://jrsoftware.org/isdl.php
 cd F1RssFeedRead/installer
-.\build-exe.ps1 -Version "0.1.0"
+.\build-msix.ps1 -Version "0.1.0"
 ```
 
-This publishes the app unpackaged and self-contained for both `x64` and `arm64` (via `-p:WindowsPackageType=None` on the command line only — your `.csproj` and the Visual Studio **(Package)** dev workflow are untouched), then runs Inno Setup against `setup.iss` to produce the installers in `F1RssFeedRead\installer\Installer\`.
+This finds (or creates, on first run) a self-signed code-signing certificate matching the `Publisher` in `Package.appxmanifest` (`CN=dah007`), then publishes and packages the app as a signed, sideload-only MSIX for both `x64` and `ARM64`, plus exports the certificate's public half. Output lands in `F1RssFeedRead\installer\Release\`:
 
-`setup.iss` registers the extension's out-of-process COM server (`HKCU\...\CLSID\{20d1b788-ddd1-4b84-a5fa-df3b61a47939}\LocalServer32`) so Command Palette can activate it without an MSIX package — the same CLSID used by `Package.appxmanifest` for the Store/sideload path. Uninstalling removes those registry entries along with the files.
+```text
+Release/
+├── x64/.../F1RssFeedRead_<version>_x64.msix
+├── ARM64/.../F1RssFeedRead_<version>_arm64.msix
+└── F1SpeedFeedRead.cer
+```
+
+**Why not a plain EXE installer?** Command Palette discovers extensions through Windows' `AppExtensionCatalog` API, which only enumerates *installed packages* that declare the `com.microsoft.commandpalette` app extension in their manifest (see `Package.appxmanifest`) — it never scans COM registry entries directly. A registry-only registration (what an Inno Setup–style EXE installer would produce) is enough for *activating* the extension once Command Palette has found it, but not for being found in the first place. So the extension has to ship as a real package — MSIX here, rather than a Store listing — and installing it means trusting the signing certificate once, the same as for any other self-signed sideloaded app.
+
+If you ever need a *different* signing certificate (e.g. a paid one from a CA), update `Publisher` in `Package.appxmanifest` to match its Subject exactly, and pass `-CertSubject` to `build-msix.ps1`. Never commit the `.pfx`/private key to the repo — only the exported `.cer` (public key) is meant to be distributed.
 
 ## Project structure
 
@@ -87,8 +95,7 @@ F1RssFeedRead/
     ├── Models/                         # FeedSource, RssArticle, FeedFormResult
     └── Persistence/                    # feeds.json (de)serialization
 └── installer/
-    ├── setup.iss                      # Inno Setup installer/uninstaller script
-    └── build-exe.ps1                  # Publishes + builds the installer EXEs
+    └── build-msix.ps1                 # Builds the signed, sideloadable MSIX packages
 ```
 
 ## Tech stack
