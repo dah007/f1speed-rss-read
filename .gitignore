@@ -7,9 +7,15 @@
 *.user
 *.suo
 
-# Installer build artifacts (produced by installer/build-exe.ps1)
-installer/Installer/
-installer/publish/
+# Installer build artifacts (produced by installer/build-msix.ps1) —
+# includes the exported .cer; it's regenerated from the local signing cert
+# each build, and read the comment in that script before ever committing
+# a .pfx anywhere.
+# NOTE: these paths are written in full (not just "installer/Release/")
+# because a gitignore pattern containing a slash anywhere but the very end
+# anchors to the repo root, not to every directory named "installer".
+F1RssFeedRead/installer/Release/
+F1RssFeedRead/F1RssFeedRead/AppPackages/
 
 # Rider / VS Code
 .idea/

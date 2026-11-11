@@ -26,7 +26,7 @@ internal sealed partial class F1RssFeedReadPage : ContentPage
     {
         _feedsManager = feedsManager;
         Id = "F1RssFeedRead.News";
-        Icon = new IconInfo("🏁");
+        Icon = IconHelpers.FromRelativePath("Assets\\StoreLogo.png");
         Title = "F1 News";
         Name = "Open";
     }
