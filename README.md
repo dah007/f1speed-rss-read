@@ -12,6 +12,15 @@ Repo: [github.com/dah007/f1speed-rss-read](https://github.com/dah007/f1speed-rss
 - Click a headline to open the full article in your default browser.
 - Everything is stored locally; nothing but the feed requests themselves leaves your machine.
 
+## Screenshots
+
+| Screenshot | Description |
+| --- | --- |
+| ![Searching for "f1" in Command Palette, showing F1 News and Manage F1 Feeds results](screenshots/command-palette-01.png) | Typing **f1** in Command Palette surfaces **F1 News** (the aggregated feed) and **Manage F1 Feeds** (feed management) as results. |
+| ![The F1 News content page, listing recent headlines with source and timestamp](screenshots/command-palette-view.png) | Opening **F1 News** renders the latest headlines from all configured feeds as one scrollable page, each with its source and publish time. |
+| ![F1 News pinned to Command Palette's dock band, shown as a persistent top bar](screenshots/dock-view.png) | Pinned to the dock band, **F1 News** stays one click away from anywhere, expanding to the same feed view. |
+| ![The Manage F1 Feeds page, listing the four default feeds plus an Add feed option](screenshots/manage-feeds.png) | **Manage F1 Feeds** lists every configured feed — the four defaults shown here — plus an **Add feed** entry to add your own. |
+
 ## Requirements
 
 - Windows 10 (build 19041+) or Windows 11.

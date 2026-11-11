@@ -11,7 +11,7 @@
   <Identity
     Name="F1RssFeedRead"
     Publisher="CN=dah007"
-    Version="0.0.1.0" />
+    Version="0.0.3.0" />
   <!-- Publisher must exactly match the Subject of the certificate used to sign
        the MSIX (see installer/build-msix.ps1), or signing/installation fails. -->
 
