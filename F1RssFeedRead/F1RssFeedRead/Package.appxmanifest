@@ -37,7 +37,7 @@
       <uap:VisualElements
         DisplayName="F1Speed Feed Read"
         Description="F1Speed Feed Read"
-        BackgroundColor="transparent"
+        BackgroundColor="#0B0B0D"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
